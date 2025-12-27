@@ -3,8 +3,8 @@
 // Runtime types generated with workerd@1.20251210.0 2025-12-25 nodejs_compat
 declare namespace Cloudflare {
 	interface GlobalProps {
-		mainModule: typeof import("./src/index");
-		durableNamespaces: "MyDurableObject";
+		mainModule: typeof import('./src/index');
+		durableNamespaces: 'MyDurableObject';
 	}
 	interface Env {
 		TWILIO_ACCOUNT_SID: string;
@@ -17,7 +17,9 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "TWILIO_ACCOUNT_SID" | "TWILIO_AUTH_TOKEN">> {}
+	interface ProcessEnv extends StringifyValues<
+		Pick<Cloudflare.Env, 'TWILIO_ACCOUNT_SID' | 'TWILIO_AUTH_TOKEN'>
+	> {}
 }
 
 // Begin runtime types
