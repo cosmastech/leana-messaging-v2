@@ -65,7 +65,8 @@ export default {
 			console.error('No subscriber found. Exiting early without a response.', {
 				subscriber_number: from,
 			});
-			// The sender did not opt in or out but they are not in the database.
+
+			// The sender did not opt in or out and they are not in the database.
 			return createNewResponse('');
 		}
 
