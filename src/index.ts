@@ -1,7 +1,5 @@
-import { DurableObject } from 'cloudflare:workers';
-import twilio from 'twilio';
 import { createNewResponse, TwilioClient } from './services/twilio';
-import { SubscriberRepository, Subscriber } from './repositories/subscribers';
+import { SubscriberRepository } from './repositories/subscribers';
 
 const STOP_WORDS = ['stop'];
 const SUBSCRIBE_WORDS = ['start'];
