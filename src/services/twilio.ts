@@ -9,7 +9,7 @@ export class TwilioClient {
 		this.#twilio = twilio;
 	}
 
-	sendMessage(contactNumber: string, message: string) {
+	async sendMessage(contactNumber: string, message: string) {
 		return this.#twilio.messages.create({
 			to: contactNumber,
 			body: message,
