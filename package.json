@@ -14,5 +14,8 @@
 	},
 	"dependencies": {
 		"twilio": "^5.11.1"
-	}
+	},
+	"compatibility_flags": [
+		"nodejs_compat"
+	]
 }

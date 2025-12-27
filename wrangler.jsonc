@@ -7,6 +7,7 @@
 	"name": "leana-alerts-v2",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-12-25",
+	"compatibility_flags": ["nodejs_compat"],
 	"migrations": [
 		{
 			"new_sqlite_classes": ["MyDurableObject"],
