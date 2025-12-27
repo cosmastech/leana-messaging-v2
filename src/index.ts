@@ -17,6 +17,8 @@ export default {
 	 */
 	async fetch(request: Request, env, ctx): Promise<Response> {
 		if (request.method !== 'POST') {
+			console.error(`Received ${request.method}, rejecting with 405 status`);
+
 			return new Response('Method Not Allowed', { status: 405 });
 		}
 
@@ -25,10 +27,12 @@ export default {
 		const from = data.get('From');
 
 		if (typeof body !== 'string') {
+			console.error('body is not a string. Exiting early.');
 			return createNewResponse('Invalid Body', 400);
 		}
 
 		if (typeof from !== 'string') {
+			console.error('from is not a string. Exiting early.');
 			return createNewResponse('Invalid From', 400);
 		}
 
@@ -39,6 +43,7 @@ export default {
 				isActive: true,
 			});
 
+			console.log({ subscriber_number: from, action: 'subscribed' });
 			return createNewResponse(
 				'Thank you! You will receive updates from LEANA alerts. Reply STOP to unsubscribe',
 			);
@@ -48,6 +53,7 @@ export default {
 			await subscriberRepository.insertOrUpdateSubscriber(from, {
 				isActive: false,
 			});
+			console.log({ subscriber_number: from, action: 'unsubscribed' });
 
 			return createNewResponse(
 				'You have been unsubscribed. You will no longer receive updates from LEANA alerts',
@@ -56,22 +62,33 @@ export default {
 
 		const subscriber = await subscriberRepository.getSubscriber(from);
 		if (subscriber === undefined) {
-			// @todo???
-			return new Response(); // @todo
+			console.error('No subscriber found. Exiting early without a response.', {
+				subscriber_number: from,
+			});
+			// The sender did not opt in or out but they are not in the database.
+			return createNewResponse('');
 		}
 
-		if (subscriber.isAdmin) {
-			const subscribers = await subscriberRepository.getActiveSubscribers();
-			const twilioService = TwilioClient.createFromEnv(env);
-			const promises = subscribers.map((subscriber) =>
-				twilioService.sendMessage(subscriber.contact, body),
-			);
+		if (!subscriber.isAdmin) {
+			console.error('Sender is not an admin. Exiting early without a response.', { subscriber });
 
-			await Promise.allSettled(promises);
-
-			return createNewResponse('Sent your message to ' + subscribers.length + ' subscribers.');
+			return createNewResponse('');
 		}
 
-		return createNewResponse('');
+		const subscribers = await subscriberRepository.getActiveSubscribers();
+		const twilioService = TwilioClient.createFromEnv(env);
+		const promises = subscribers.map((subscriber) =>
+			twilioService.sendMessage(subscriber.contact, body),
+		);
+
+		console.log(`Sending message to ${promises.length} subscribers`, {
+			subscriber: subscriber,
+			body: body,
+		});
+
+		// @todo consider filtering these into passes/failures
+		Promise.allSettled(promises);
+
+		return createNewResponse('Sent your message to ' + subscribers.length + ' subscribers.');
 	},
 } satisfies ExportedHandler<Env>;
