@@ -15,7 +15,7 @@ export default {
      */
     async fetch(request: Request, env, ctx): Promise<Response> {
         if (request.method !== 'POST') {
-            console.error(`Received ${request.method}, rejecting with 405 status`);
+            console.error(`Received ${request.method}, but method is not allowed.`);
 
             return new Response('Method Not Allowed', { status: 405 });
         }
@@ -26,11 +26,13 @@ export default {
 
         if (typeof body !== 'string') {
             console.error('body is not a string. Exiting early.');
+
             return createNewResponse('Invalid Body', 400);
         }
 
         if (typeof from !== 'string') {
             console.error('from is not a string. Exiting early.');
+
             return createNewResponse('Invalid From', 400);
         }
 
@@ -90,6 +92,6 @@ export default {
         // @todo consider filtering these into passes/failures
         Promise.allSettled(promises);
 
-        return createNewResponse('Sent your message to ' + subscribers.length + ' subscribers.');
+        return createNewResponse(`Sent your message to ${subscribers.length} subscribers.`);
     },
 } satisfies ExportedHandler<Env>;
