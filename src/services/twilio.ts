@@ -1,5 +1,4 @@
 import twilio, { Twilio } from 'twilio';
-import { MessageInstance } from 'twilio/lib/rest/ipMessaging/v2/service/channel/message';
 const { MessagingResponse } = twilio.twiml;
 
 export class TwilioClient {
